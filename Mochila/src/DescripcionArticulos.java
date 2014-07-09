@@ -42,7 +42,9 @@ public class DescripcionArticulos extends javax.swing.JFrame {
         this.probabilidadCruce = probabilidadCruce;
         this.probabilidadMutacion = probabilidadMutacion;
     }
-    
+    /**
+     * Crea la interfaz que permite al usuario ingresar los datos de loa artículos
+     */
     private void createGUI() {
         this.setTitle("Descripción de artículos");
         setLayout(new BorderLayout());
@@ -59,8 +61,8 @@ public class DescripcionArticulos extends javax.swing.JFrame {
         txtField1 = new JTextField();
         txtField2 = new JTextField();
         txtField3 = new JTextField();
-        JLabel lblField1 = new JLabel("Nombre   ");
-        JLabel lblField2 = new JLabel("Peso   ");
+        JLabel lblField1 = new JLabel("Nombre   "); //tres datos que el usuario
+        JLabel lblField2 = new JLabel("Peso   ");   //debe ingresar
         JLabel lblField3 = new JLabel("Utilidad   ");
         northPanel.add(lblField1);
         northPanel.add(txtField1);
@@ -75,8 +77,8 @@ public class DescripcionArticulos extends javax.swing.JFrame {
         add(eastPanel, BorderLayout.EAST);
         add(pane,BorderLayout.CENTER);
         tableModel = new DefaultTableModel(new Object[]{"Nombre","Peso","Utilidad"},0);
-        table.setModel(tableModel);
-        btnAdd.addActionListener(new ActionListener(){
+        table.setModel(tableModel); //Tabla en la que se van prentando los datos de los articulos agregados
+        btnAdd.addActionListener(new ActionListener(){ //Boton que confirma la agregación de un nuevo articulo a la tabla de articulos
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
@@ -95,16 +97,16 @@ public class DescripcionArticulos extends javax.swing.JFrame {
                 }
             }
         });
-        btnNext.addActionListener(new ActionListener(){
+        btnNext.addActionListener(new ActionListener(){ //Boton que permite indicar que se terminó la adicion de articulos a la tabla
             @Override
             public void actionPerformed(ActionEvent e) {
-                ArrayList<Articulo> articulos = new ArrayList<Articulo>();
+                ArrayList<Articulo> articulos = new ArrayList<Articulo>(); //estructura con los articulos de la tabla
                 for(int i=0;i<table.getRowCount();++i){
                     Articulo articulo = new Articulo(table.getValueAt(i, 0).toString(),Double.parseDouble(table.getValueAt(i, 1).toString()),Double.parseDouble(table.getValueAt(i, 2).toString()));
-                    articulos.add(articulo);
+                    articulos.add(articulo); //Se crea un objeto articulo y se agrega
                 }
                 controlador = new Controlador(articulos,pesoMochila,tipoOptimizacion,probabilidadCruce,probabilidadMutacion);
-                controlador.run();
+                controlador.run(); // Se llama al metodo del controlador que ejecuta el algoritmo que busca la solucion
                 
                 ArrayList<Cromosoma> resultados = controlador.getMejoresCromosomas();
                 int pesoTotal = 0;
@@ -121,7 +123,7 @@ public class DescripcionArticulos extends javax.swing.JFrame {
                              pesoTotal+= articulos.get(j).getPeso();
                              utilidadTotal += articulos.get(j).getUtilidad();
                          }  
-                     }
+                     } //Se muestran los datos de los mejores cromosomas de cada generacion
                      resultado += "Peso total: "+pesoTotal +"\nUtilidad total: "+utilidadTotal;
                      if(i== resultados.size()-1){
                          String mensaje = "Se le aconseja llevar los siguientes artículos:\n\n"+resultado;

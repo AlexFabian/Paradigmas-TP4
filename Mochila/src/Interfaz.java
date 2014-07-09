@@ -149,7 +149,7 @@ public class Interfaz extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
+    
     private void siguienteActionPerformed(java.awt.event.ActionEvent evt) {                                          
         // TODO add your handling code here:
         double pesoMaximo = 0;
@@ -163,7 +163,7 @@ public class Interfaz extends javax.swing.JFrame {
             optimizacion = tipoOptimizacion.getSelectedItem().toString();
             probaCruce = Double.parseDouble(probabilidadCruce.getText());
             probaMutacion = Double.parseDouble(probabilidadMutacion.getText());
-            if(pesoMaximo <= 0){
+            if(pesoMaximo <= 0){ //Validacion de los datos de entrada 
                 mensaje = "El peso máximo de la mochila debe ser un valor positivo mayor que cero";
                 repite = true;
             }
@@ -171,14 +171,14 @@ public class Interfaz extends javax.swing.JFrame {
                 mensaje = "Las probabilidades deben darse en valores decimales entre 0 y 1";
                 repite = true;
             }
-            if(!repite){
+            if(!repite){ //Si los datos son válidos se pasa al siguiente formulario donde se indican los articulos
                 DescripcionArticulos descripcion = new DescripcionArticulos(pesoMaximo,optimizacion,probaCruce,probaMutacion);
                 descripcion.setVisible(true);
                 this.dispose(); 
             }else{
                 JOptionPane.showMessageDialog(null, mensaje,"Error", WIDTH, null);
             }
-        }catch(Exception e){
+        }catch(Exception e){ //Si no corresponden a numeros se indica para que vuelvan a ingresarse
             JOptionPane.showMessageDialog(null, "Uno o varios de los campos contienen información no válida","Error", WIDTH, null);
         };
         
