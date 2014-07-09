@@ -12,15 +12,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- *
- * @author Alex
+ * @author Mario, Alex
+ * @version 07.08.14
  */
 public class DescripcionArticulos extends javax.swing.JFrame {
     private JTable table;
@@ -83,6 +77,9 @@ public class DescripcionArticulos extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent e) {
                 int count = tableModel.getRowCount()+1;
                 tableModel.addRow(new Object[]{txtField1.getText(),txtField2.getText(),txtField3.getText()});
+                txtField1.setText("");
+                txtField2.setText("");
+                txtField3.setText("");
             }
         });
         btnNext.addActionListener(new ActionListener(){

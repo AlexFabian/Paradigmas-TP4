@@ -1,32 +1,28 @@
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- *
- * @author Alex
+ * @author Mario, Alex
+ * @version 07.08.14
  */
 public class Poblacion {
     private ArrayList<Cromosoma> individuos;
     private double probabilidadMutacion;
     private double pesoMochila;
-    private int cantidadIndividuos;
+    private ArrayList<Articulo> articulos;
     private int fitnessTotal = 0;
     
-    public Poblacion(double probabilidadMutacion,double pesoMochila){
+    public Poblacion(double probabilidadMutacion,double pesoMochila, ArrayList<Articulo> articulos){
         this.probabilidadMutacion = probabilidadMutacion;
         this.pesoMochila = pesoMochila;
-        individuos = new ArrayList<Cromosoma>();
-        cantidadIndividuos = 30; //cambiar esto por fórmula
+        this.articulos = articulos;
+        individuos = new ArrayList<>();
     }
     
     public void generarPoblacionInicial(ArrayList<Articulo> articulos){
+        int cantidadIndividuos = (int) Math.pow(2,articulos.size()); //todas las posibles combinaciones
         for(int i=0;i<cantidadIndividuos;++i){
             individuos.add( new Cromosoma(articulos, pesoMochila));
         }
@@ -45,15 +41,15 @@ public class Poblacion {
     }
     
     public Poblacion evaluarAptitud(String tipoOptimizacion){
-        Poblacion posiblesPadres = new Poblacion(probabilidadMutacion, pesoMochila);
+        Poblacion posiblesPadres = new Poblacion(probabilidadMutacion, pesoMochila, articulos);
         if(tipoOptimizacion.equalsIgnoreCase("Por cantidad")){
-            for(int i=0;i<cantidadIndividuos;++i){
+            for(int i=0;i<individuos.size();++i){
                 if(individuos.get(i).calcularFitnessCantidad()!=-1){
                     posiblesPadres.agregarIndividuo(individuos.get(i));
                 }
             }
         }else{
-            for(int i=0;i<cantidadIndividuos;++i){
+            for(int i=0;i<individuos.size();++i){
                 if(individuos.get(i).calcularFitnessUtilidad()!=-1){
                     posiblesPadres.agregarIndividuo(individuos.get(i));
                 }
@@ -61,51 +57,23 @@ public class Poblacion {
         }
         return posiblesPadres;
     }
-    
+    /**
+     * Selecciona los padres a partir de un conjunto de posibles padres.
+     * Se utiliza el algoritmo de selección por ruleta
+     * @return 
+     */
     public Poblacion seleccionarPadres(){
-        Poblacion padres = new Poblacion( probabilidadMutacion, pesoMochila); //por ruleta
-        int[] probas = new int[individuos.size()];
-        for(int i=0;i<individuos.size();++i){
-            fitnessTotal += individuos.get(i).getFitness();
-        }
-        double probaPaternidad=0;
-        for(int i=0;i<individuos.size();++i){
-            probaPaternidad  = individuos.get(i).getFitness()/fitnessTotal;
-            individuos.get(i).setProbaPaternidad(probaPaternidad);
-            if(i!=0){
-                probas[i] = (int) ((probaPaternidad *100)+ probas[i-1]);
-            }else{
-                probas[i] = (int) (probaPaternidad*100);
-            }
-        }
-        /*System.out.println("\n\nProbas");
-        for(int j=0;j<probas.length;++j){
-            System.out.print(probas[j]+"\t");
-        }
-        System.out.println();
-        System.out.println("\n\nPadres");*/
-        for(int i=0;i<individuos.size()/2;++i){
-            Random r = new Random();
-            int randomNum = r.nextInt(101);
-            for(int j=0;j<probas.length;++j){
-                if(probas[j]>randomNum || j == probas.length){
-                    if(j!=0 && j != probas.length){
-                        padres.agregarIndividuo(individuos.get(j-1));
-                        //System.out.print(j-1+"\t");
-                    }else{
-                        padres.agregarIndividuo(individuos.get(j));
-                        //System.out.print(j+"\t");
-                    }
-                    break;
-                }
-            }
+        Poblacion padres = new Poblacion( probabilidadMutacion, pesoMochila, articulos); 
+        Collections.sort(individuos); //Se ordenan descendentemente de acuerdo al fitness
+        for(int i=0;i<individuos.size()/2;++i){ //Se escoge la mitad de la población para ser padres
+            padres.agregarIndividuo(individuos.get(i));
         }
         
         return padres;
     }
     
     public Poblacion cruzar(double probabilidadCruce){
-        Poblacion hijos = new Poblacion( probabilidadMutacion, pesoMochila); //por ruleta
+        Poblacion hijos = new Poblacion( probabilidadMutacion, pesoMochila, articulos); //por ruleta
         int hijosPorCruce = (int) (probabilidadCruce*individuos.size());
         int hijosClones = individuos.size() - hijosPorCruce;
         
@@ -113,18 +81,15 @@ public class Poblacion {
         int j = 0;
         boolean paridad =(hijosPorCruce%2==0)? true:false;
         for(int i=0;i<hijosPorCruce/2;++i){
-            //System.out.print(j+"y"+j+1+"\t");
-            //System.out.print(j+1+"y"+j+"\t");
             Cromosoma papa = individuos.get(j);
             Cromosoma mama = individuos.get(j+1);
             Cromosoma hijo1 = cruce(papa,mama);
             Cromosoma hijo2 = cruce(mama,papa);
-            j += 2;
             hijos.agregarIndividuo(hijo1);
             hijos.agregarIndividuo(hijo2);
+            j += 2;
         }
         if(!paridad){
-            //System.out.print(j+"y"+j+1+"\t");
             Cromosoma papa = individuos.get(j);
             Cromosoma mama = individuos.get(j+1);
             Cromosoma hijo1 = cruce(papa,mama);
@@ -132,27 +97,24 @@ public class Poblacion {
             hijos.agregarIndividuo(hijo1);
         }
         for(int i=0;i<hijosClones;++i){
-            //System.out.print("C\t");
             hijos.agregarIndividuo(individuos.get(j++));
         }
         return hijos;
     }
     
     public Cromosoma cruce(Cromosoma papa, Cromosoma mama){
-        Cromosoma hijo = new Cromosoma();
+        Cromosoma hijo = new Cromosoma(articulos,pesoMochila,0);
         String cromosoma1 = papa.getCromosoma();
         String cromosoma2 = mama.getCromosoma();
         String cromosomaHijo = "";
         int puntoCruce = cromosoma1.length()/2;
-        //System.out.println("Parte 1 "+cromosoma1.substring(0,puntoCruce));
-        //System.out.println("Parte 2 "+cromosoma2.substring(puntoCruce,cromosoma2.length()));
         cromosomaHijo += cromosoma1.substring(0,puntoCruce)+cromosoma2.substring(puntoCruce,cromosoma2.length());
         hijo.setCromosoma(cromosomaHijo);
         return hijo;
     }
     
     public Poblacion mutar(double probabilidadMutacion){
-        Poblacion hijosMutados = new Poblacion( probabilidadMutacion, pesoMochila);
+        Poblacion hijosMutados = new Poblacion( probabilidadMutacion, pesoMochila, articulos);
         Random r = new Random();
         
         Random s = new Random();
@@ -163,10 +125,6 @@ public class Poblacion {
                 Cromosoma hijo = individuos.get(i);
                 String cromosoma = hijo.getCromosoma();
                 char gen = (cromosoma.charAt(posicion)=='1')?'0' : '1'; 
-                //System.out.println("Parte 1: "+cromosoma.substring(0,posicion));
-                //System.out.println("Parte 2: "+cromosoma.substring(posicion+1,cromosoma.length()));
-                //System.out.println("Posición: "+posicion);
-                //System.out.println("Gen: "+gen);
                 hijo.setCromosoma(cromosoma.substring(0,posicion)+gen+cromosoma.substring(posicion+1,cromosoma.length()));
                 hijosMutados.agregarIndividuo(hijo);
             }else{
@@ -176,4 +134,6 @@ public class Poblacion {
         return hijosMutados;
     }
     
+   
 }
+
