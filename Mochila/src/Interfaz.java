@@ -1,4 +1,7 @@
 
+import javax.swing.JOptionPane;
+
+
 /**
  * @author Mario, Alex
  * @version 07.08.14
@@ -147,23 +150,39 @@ public class Interfaz extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void siguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_siguienteActionPerformed
+    private void siguienteActionPerformed(java.awt.event.ActionEvent evt) {                                          
         // TODO add your handling code here:
         double pesoMaximo = 0;
         String optimizacion = null;
         double probaCruce = 0;
         double probaMutacion = 0;
+        String mensaje = "";
+        boolean repite = false;
         try{
             pesoMaximo = Double.parseDouble(pesoMochila.getText());
             optimizacion = tipoOptimizacion.getSelectedItem().toString();
             probaCruce = Double.parseDouble(probabilidadCruce.getText());
             probaMutacion = Double.parseDouble(probabilidadMutacion.getText());
-            
-        }catch(Exception e){};
-        DescripcionArticulos descripcion = new DescripcionArticulos(pesoMaximo,optimizacion,probaCruce,probaMutacion);
-        descripcion.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_siguienteActionPerformed
+            if(pesoMaximo <= 0){
+                mensaje = "El peso máximo de la mochila debe ser un valor positivo mayor que cero";
+                repite = true;
+            }
+            if(probaCruce <=0 || probaCruce > 1 || probaMutacion<=0 || probaMutacion > 1){
+                mensaje = "Las probabilidades deben darse en valores decimales entre 0 y 1";
+                repite = true;
+            }
+            if(!repite){
+                DescripcionArticulos descripcion = new DescripcionArticulos(pesoMaximo,optimizacion,probaCruce,probaMutacion);
+                descripcion.setVisible(true);
+                this.dispose(); 
+            }else{
+                JOptionPane.showMessageDialog(null, mensaje,"Error", WIDTH, null);
+            }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Uno o varios de los campos contienen información no válida","Error", WIDTH, null);
+        };
+        
+    }                                         
 
     /**
      * @param args the command line arguments
