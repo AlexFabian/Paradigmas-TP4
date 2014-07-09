@@ -6,7 +6,6 @@ import java.util.ArrayList;
  * @version 07.08.14
  */
 public class Controlador {
-    
     ArrayList<Articulo> articulos;
     ArrayList<Cromosoma> mejoresCromosomas;
     double pesoMochila;
@@ -15,6 +14,14 @@ public class Controlador {
     double probabilidadMutacion;
     Poblacion poblacion;
     
+    /**
+     * Constructor del controlador
+     * @param articulos
+     * @param pesoMochila
+     * @param tipoOptimizacion
+     * @param probabilidadCruce
+     * @param probabilidadMutacion 
+     */
     public Controlador(ArrayList<Articulo> articulos,double pesoMochila,String tipoOptimizacion,double probabilidadCruce, double probabilidadMutacion){
         this.articulos = articulos;
         this.tipoOptimizacion = tipoOptimizacion;
@@ -23,39 +30,49 @@ public class Controlador {
         this.poblacion = new Poblacion(probabilidadMutacion, pesoMochila,articulos);
         this.mejoresCromosomas = new ArrayList<>();
     }
-    
+    /**
+     * Retorna los mejores cromosomas de todas las generaciones
+     * @return mejores cromosomas
+     */
     public ArrayList<Cromosoma> getMejoresCromosomas(){
         return mejoresCromosomas;
     }
-    
+    /**
+     * Método principal. Realiza los pasos de un algoritmo genético
+     */
     public void run(){
-        poblacion.generarPoblacionInicial(articulos); //Paso 1
+        /*Paso 1: Se genera la población inicial*/
+        poblacion.generarPoblacionInicial(articulos); 
+        
+        /*Se imprime la población inicial*/
         System.out.println("Poblacion incial");
         for(int i=0;i<poblacion.getCantidadIndividuos();++i){
             System.out.print(poblacion.getIndividuo(i).getCromosoma()+"\t");
         }
         System.out.println();
         
-        Poblacion posiblesPadres = poblacion.evaluarAptitud(tipoOptimizacion); // Paso 2
+        /*Paso 2: Se evalua la aptitud*/
+        Poblacion posiblesPadres = poblacion.evaluarAptitud(tipoOptimizacion); 
         
+        /*Paso 3: se crean las generaciones*/
         int generaciones = 0;
-        while(generaciones < 20 && (posiblesPadres.getCantidadIndividuos() > 5 || generaciones == 0) ){ //Paso 3
-            /*Selección*/
+        while(generaciones < 20 && (posiblesPadres.getCantidadIndividuos() > 5 || generaciones == 0) ){ 
+            /*Selección de padres*/
             Poblacion padres = posiblesPadres.seleccionarPadres();
             
-            /*Reproducción*/
+            /*Reproducción de los padres*/
             Poblacion hijos = padres.cruzar(probabilidadCruce);
             
-            /*Mutación*/
+            /*Mutación de los hijos*/
             Poblacion hijosMutados = hijos.mutar(probabilidadMutacion);
             
-            /*Reemplazo*/
-            /*Se reemplazan los peores, por eso a los nuevos hijos se les agregan los padres*/
+            /*Reemplazo de individuos*/
+            /*Se reemplazan los no-padres, por eso a los nuevos hijos se les agregan los padres*/
             for(int i=0;i<padres.getCantidadIndividuos();++i){
                 hijosMutados.agregarIndividuo(padres.getIndividuo(i)); 
             }
             
-            /*Evaluación*/
+            /*Evaluación de la aptitud*/
             posiblesPadres = hijosMutados.evaluarAptitud(tipoOptimizacion);
             
             /*Se imprimen los resultados de la generación*/
@@ -64,6 +81,8 @@ public class Controlador {
                 System.out.print(posiblesPadres.getIndividuo(i).getCromosoma()+"\t");
             }
             System.out.println();
+            
+            /*Se obtiene el mejor cromosoma de la generación*/
             Cromosoma mejorCromosoma = posiblesPadres.getIndividuo(0);
             for(int i=0;i<posiblesPadres.getCantidadIndividuos();++i){
                 if(mejorCromosoma.getFitness() < posiblesPadres.getIndividuo(i).getFitness()){
@@ -74,6 +93,7 @@ public class Controlador {
             mejoresCromosomas.add(mejorCromosoma);
             ++generaciones;
         }
+        /*Se imprimen los mejores cromosomas de todas las generaciones*/
         System.out.println();
         for(int i=0;i<mejoresCromosomas.size();++i){
             System.out.println("\nGeneración "+i+", mejor cromosoma: "+mejoresCromosomas.get(i).getCromosoma());
