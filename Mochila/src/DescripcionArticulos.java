@@ -78,8 +78,8 @@ public class DescripcionArticulos extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                    if(Double.parseDouble(txtField2.getText()) < 0 || Double.parseDouble(txtField3.getText()) < 0 ){
-                        JOptionPane.showMessageDialog(null, "El peso y la utilidad deben ser valores positivos","Error", JOptionPane.ERROR_MESSAGE);
+                    if(Double.parseDouble(txtField2.getText()) < 0 || Double.parseDouble(txtField3.getText()) < 0 || txtField3.getText() == null){
+                        JOptionPane.showMessageDialog(null, "Uno o varios campos contienen información no válida","Error", JOptionPane.ERROR_MESSAGE);
                     }else{
                         int count = tableModel.getRowCount()+1;
                         tableModel.addRow(new Object[]{txtField1.getText(),txtField2.getText(),txtField3.getText()});
@@ -89,20 +89,36 @@ public class DescripcionArticulos extends javax.swing.JFrame {
                         btnNext.setEnabled(true);
                     }
                 }catch(NumberFormatException ex){ //Digitó algo que no era un número
-                    JOptionPane.showMessageDialog(null, "Entrada no válida", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Uno o varios campos contienen información no válida", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
         btnNext.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-               ArrayList<Articulo> articulos = new ArrayList<Articulo>();
-               for(int i=0;i<table.getRowCount();++i){
-                   Articulo articulo = new Articulo(table.getValueAt(i, 0).toString(),Double.parseDouble(table.getValueAt(i, 1).toString()),Double.parseDouble(table.getValueAt(i, 2).toString()));
-                   articulos.add(articulo);
-               }
-               controlador = new Controlador(articulos,pesoMochila,tipoOptimizacion,probabilidadCruce,probabilidadMutacion);
-               controlador.run();
+                ArrayList<Articulo> articulos = new ArrayList<Articulo>();
+                for(int i=0;i<table.getRowCount();++i){
+                    Articulo articulo = new Articulo(table.getValueAt(i, 0).toString(),Double.parseDouble(table.getValueAt(i, 1).toString()),Double.parseDouble(table.getValueAt(i, 2).toString()));
+                    articulos.add(articulo);
+                }
+                controlador = new Controlador(articulos,pesoMochila,tipoOptimizacion,probabilidadCruce,probabilidadMutacion);
+                controlador.run();
+                
+                ArrayList<Cromosoma> resultados = controlador.getMejoresCromosomas();
+                for(int i=0;i<resultados.size();++i){
+                     String resultado = "Se le aconseja llevar los siguientes artículos:\n\n";
+                     String cromosoma = resultados.get(i).getCromosoma();
+                     for(int j=0;j<cromosoma.length();++j){
+                         if(cromosoma.charAt(j)=='1'){
+                             resultado += "Articulo: "+articulos.get(j).getNombre()+", Peso: "+articulos.get(j).getPeso()+", Utilidad: "+articulos.get(j).getUtilidad()+"\n";
+                         }  
+                     }
+                     if(i== resultados.size()-1){
+                        JOptionPane.showMessageDialog(null, resultado, "Resultado Final", JOptionPane.INFORMATION_MESSAGE);
+                     }else{
+                        JOptionPane.showMessageDialog(null, resultado, "Resultado Generación "+i, JOptionPane.INFORMATION_MESSAGE);
+                     }
+                }
             }
         });
         setLocationRelativeTo(null);
