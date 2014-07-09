@@ -105,14 +105,21 @@ public class DescripcionArticulos extends javax.swing.JFrame {
                 controlador.run();
                 
                 ArrayList<Cromosoma> resultados = controlador.getMejoresCromosomas();
+                int pesoTotal = 0;
+                int utilidadTotal = 0;
                 for(int i=0;i<resultados.size();++i){
                      String resultado = "Se le aconseja llevar los siguientes artículos:\n\n";
                      String cromosoma = resultados.get(i).getCromosoma();
+                     pesoTotal = 0;
+                     utilidadTotal = 0;
                      for(int j=0;j<cromosoma.length();++j){
                          if(cromosoma.charAt(j)=='1'){
                              resultado += "Articulo: "+articulos.get(j).getNombre()+", Peso: "+articulos.get(j).getPeso()+", Utilidad: "+articulos.get(j).getUtilidad()+"\n";
+                             pesoTotal+= articulos.get(j).getPeso();
+                             utilidadTotal += articulos.get(j).getUtilidad();
                          }  
                      }
+                     resultado += "Peso total: "+pesoTotal +"\nUtilidad total: "+utilidadTotal;
                      if(i== resultados.size()-1){
                         JOptionPane.showMessageDialog(null, resultado, "Resultado Final", JOptionPane.INFORMATION_MESSAGE);
                      }else{
