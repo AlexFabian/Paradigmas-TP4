@@ -85,6 +85,7 @@ public class Poblacion {
             Cromosoma mama = individuos.get(j+1);
             Cromosoma hijo1 = cruce(papa,mama);
             Cromosoma hijo2 = cruce(mama,papa);
+            
             hijos.agregarIndividuo(hijo1);
             hijos.agregarIndividuo(hijo2);
             j += 2;

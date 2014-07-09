@@ -44,6 +44,10 @@ public class Cromosoma implements Comparable<Cromosoma>{
         return fitness;
     }
     
+    public void setFitness(double fitness){
+        this.fitness = fitness;
+    }
+    
     public String getCromosoma(){
         return cromosoma;
     }
@@ -61,6 +65,7 @@ public class Cromosoma implements Comparable<Cromosoma>{
     }
     
     public double calcularFitnessUtilidad(){
+        fitness = 0;
         for(int i=0;i<cromosoma.length();++i){
             if(cromosoma.charAt(i)=='1'){
                 pesoTotal += articulos.get(i).getPeso();
@@ -71,6 +76,7 @@ public class Cromosoma implements Comparable<Cromosoma>{
     }
     
     public double calcularFitnessCantidad(){
+        fitness = 0;
         for(int i=0;i<cromosoma.length();++i){
             if(cromosoma.charAt(i)=='1'){
                 pesoTotal += articulos.get(i).getPeso();
@@ -80,16 +86,9 @@ public class Cromosoma implements Comparable<Cromosoma>{
         return (pesoTotal<=pesoMochila) ? fitness : -1;
     }
     
-    public int compareTo(Cromosoma compareFruit) {
- 
-		int compareQuantity = (int)((Cromosoma) compareFruit).getFitness(); 
- 
-		//ascending order
-		//return this.fitness - compareQuantity;
- 
-		//descending order
-		return compareQuantity - (int)this.fitness;
- 
-	}
+    public int compareTo(Cromosoma cromosoma) {
+        int compareFitness = (int)((Cromosoma) cromosoma).getFitness(); 
+        return compareFitness - (int)this.fitness;
+    }
     
 }

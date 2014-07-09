@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -49,6 +50,7 @@ public class DescripcionArticulos extends javax.swing.JFrame {
         JPanel eastPanel = new JPanel();
         btnAdd = new JButton("Agregar");
         btnNext = new JButton("Siguiente");
+        btnNext.setEnabled(false);
         eastPanel.add(btnAdd);
         eastPanel.add(btnNext);
         JPanel northPanel = new JPanel();
@@ -75,11 +77,20 @@ public class DescripcionArticulos extends javax.swing.JFrame {
         btnAdd.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                int count = tableModel.getRowCount()+1;
-                tableModel.addRow(new Object[]{txtField1.getText(),txtField2.getText(),txtField3.getText()});
-                txtField1.setText("");
-                txtField2.setText("");
-                txtField3.setText("");
+                try{
+                    if(Double.parseDouble(txtField2.getText()) < 0 || Double.parseDouble(txtField3.getText()) < 0 ){
+                        JOptionPane.showMessageDialog(null, "El peso y la utilidad deben ser valores positivos","Error", JOptionPane.ERROR_MESSAGE);
+                    }else{
+                        int count = tableModel.getRowCount()+1;
+                        tableModel.addRow(new Object[]{txtField1.getText(),txtField2.getText(),txtField3.getText()});
+                        txtField1.setText("");
+                        txtField2.setText("");
+                        txtField3.setText("");
+                        btnNext.setEnabled(true);
+                    }
+                }catch(NumberFormatException ex){ //Digitó algo que no era un número
+                    JOptionPane.showMessageDialog(null, "Entrada no válida", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         btnNext.addActionListener(new ActionListener(){
