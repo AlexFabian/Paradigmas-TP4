@@ -111,6 +111,9 @@ public class DescripcionArticulos extends javax.swing.JFrame {
                 int pesoTotal = 0;
                 int utilidadTotal = 0;
                 dispose();
+                if(resultados.isEmpty()){
+                    JOptionPane.showMessageDialog(null, "No se encontró una solución factible", "Resultado Final", JOptionPane.INFORMATION_MESSAGE);
+                }
                 for(int i=0;i<resultados.size();++i){
                      String resultado = "";
                      String cromosoma = resultados.get(i).getCromosoma();

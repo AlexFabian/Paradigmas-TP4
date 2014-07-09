@@ -83,14 +83,16 @@ public class Controlador {
             System.out.println();
             
             /*Se obtiene el mejor cromosoma de la generación*/
-            Cromosoma mejorCromosoma = posiblesPadres.getIndividuo(0);
-            for(int i=0;i<posiblesPadres.getCantidadIndividuos();++i){
-                if(mejorCromosoma.getFitness() < posiblesPadres.getIndividuo(i).getFitness()){
-                    mejorCromosoma = posiblesPadres.getIndividuo(i);
+            if(posiblesPadres.getCantidadIndividuos() > 0){
+                Cromosoma mejorCromosoma = posiblesPadres.getIndividuo(0);
+                for(int i=0;i<posiblesPadres.getCantidadIndividuos();++i){
+                    if(mejorCromosoma.getFitness() < posiblesPadres.getIndividuo(i).getFitness()){
+                        mejorCromosoma = posiblesPadres.getIndividuo(i);
+                    }
+                    System.out.print(posiblesPadres.getIndividuo(i).getFitness()+"\t");
                 }
-                System.out.print(posiblesPadres.getIndividuo(i).getFitness()+"\t");
+                mejoresCromosomas.add(mejorCromosoma);
             }
-            mejoresCromosomas.add(mejorCromosoma);
             ++generaciones;
         }
         /*Se imprimen los mejores cromosomas de todas las generaciones*/
