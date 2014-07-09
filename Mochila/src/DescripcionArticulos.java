@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
@@ -43,6 +44,7 @@ public class DescripcionArticulos extends javax.swing.JFrame {
     }
     
     private void createGUI() {
+        this.setTitle("Descripción de artículos");
         setLayout(new BorderLayout());
         JScrollPane pane = new JScrollPane();
         table = new JTable();
@@ -107,23 +109,26 @@ public class DescripcionArticulos extends javax.swing.JFrame {
                 ArrayList<Cromosoma> resultados = controlador.getMejoresCromosomas();
                 int pesoTotal = 0;
                 int utilidadTotal = 0;
+                dispose();
                 for(int i=0;i<resultados.size();++i){
-                     String resultado = "Se le aconseja llevar los siguientes artículos:\n\n";
+                     String resultado = "";
                      String cromosoma = resultados.get(i).getCromosoma();
                      pesoTotal = 0;
                      utilidadTotal = 0;
                      for(int j=0;j<cromosoma.length();++j){
                          if(cromosoma.charAt(j)=='1'){
-                             resultado += "Articulo: "+articulos.get(j).getNombre()+", Peso: "+articulos.get(j).getPeso()+", Utilidad: "+articulos.get(j).getUtilidad()+"\n";
+                             resultado += "Articulo: "+articulos.get(j).getNombre()+",\tPeso: "+articulos.get(j).getPeso()+",\tUtilidad: "+articulos.get(j).getUtilidad()+"\n";
                              pesoTotal+= articulos.get(j).getPeso();
                              utilidadTotal += articulos.get(j).getUtilidad();
                          }  
                      }
                      resultado += "Peso total: "+pesoTotal +"\nUtilidad total: "+utilidadTotal;
                      if(i== resultados.size()-1){
-                        JOptionPane.showMessageDialog(null, resultado, "Resultado Final", JOptionPane.INFORMATION_MESSAGE);
+                         String mensaje = "Se le aconseja llevar los siguientes artículos:\n\n"+resultado;
+                        JOptionPane.showMessageDialog(null, mensaje, "Resultado Final", JOptionPane.INFORMATION_MESSAGE);
                      }else{
-                        JOptionPane.showMessageDialog(null, resultado, "Resultado Generación "+i, JOptionPane.INFORMATION_MESSAGE);
+                        String mensaje = "El mejor cromosoma es:\n\n"+resultado;
+                        JOptionPane.showMessageDialog(null, mensaje, "Resultado Generación "+i, JOptionPane.INFORMATION_MESSAGE);
                      }
                 }
             }
